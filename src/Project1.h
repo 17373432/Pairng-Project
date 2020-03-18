@@ -21,6 +21,22 @@ inline bool dEqual(double x, double y) {
 	return result;
 }
 
+inline bool dLequal(double x, double y) {
+	return (x < y) || dEqual(x, y);
+}
+
+inline bool dBequal(double x, double y) {
+	return (x > y) || dEqual(x, y);
+}
+
+inline bool dLthan(double x, double y) {
+	return !dBequal(x, y);
+}
+
+inline bool dBthan(double x, double y) {
+	return !dLequal(x, y);
+}
+
 class Point {
 private:
 
@@ -38,11 +54,11 @@ public:
 	}
 	inline bool operator < (const Point right)const {
 		bool result = false;
-		if (x < right.x) {
+		if (dLthan(x, right.x)) {
 			result = true;
 		}
 		else if (dEqual(x, right.x)) {
-			if (y < right.y) {
+			if (dLthan(y, right.y)) {
 				result = true;
 			}
 		}
@@ -89,11 +105,30 @@ private:
 	double cos;
 	double sin;
 
+	string type;
+	double x1;
+	double y1;
+	double x2;
+	double y2;
+	bool direction;
+
 	void pro() noexcept;
 public:
-	Line(int x1, int y1, int x2, int y2, int no);
+	Line(int x1, int y1, int x2, int y2, string tp, int no);
 	Line(double A, double B, double C);
 	Line();
+	bool isOnLine(double x) {
+		bool result = true;
+		if (type == "Segment") {
+			result = dLequal(x1, x) && dLequal(x, x2)
+				|| dLequal(x2, x) && dLequal(x, x1);
+		}
+		else if (type == "Ray") {
+			return direction && dBequal(x, x1)
+				|| !direction && dLequal(x, x1);
+		}
+		return result;
+	}
 	bool operator < (const Line right)const {
 		return id < right.id;
 	}

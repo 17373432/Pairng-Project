@@ -58,13 +58,23 @@ int Proc::process(ifstream& in) {
 		in >> c;
 		if (c == 'L') {
 			in >> x1 >> y1 >> x2 >> y2;
-			Line line(x1, y1, x2, y2, i);
+			Line line(x1, y1, x2, y2, "Line", i);
 			preProcLine(line);
 		}
 		else if (c == 'C') {
 			in >> x1 >> y1 >> r1;
 			Circle circle(x1, y1, r1, i);
 			addCircle(circle);
+		}
+		else if (c == 'S') {
+			in >> x1 >> y1 >> x2 >> y2;
+			Line line(x1, y1, x2, y2, "Segment", i);
+			preProcLine(line);
+		}
+		else if (c == 'R') {
+			in >> x1 >> y1 >> x2 >> y2;
+			Line line(x1, y1, x2, y2, "Ray", i);
+			preProcLine(line);
 		}
 	}
 	int result = calcPoint();
@@ -126,19 +136,22 @@ void Proc::lineAndLine() {
 					continue;
 				}
 				Point p = l1.withLine(l2);
-				//set<Point>::iterator iterP = pointSet.find(p);
-				unordered_set<Point, hashPoint>::iterator iterP = pointSet.find(p);
-				//if find, add all the id of lines intersected at this point to inteId
-				if (iterP != pointSet.end()) {
-					p = *iterP;
-					vector<int> temp = p.getLines();
-					inteId.insert(temp.begin(), temp.end());
-					p.addLine(l1.getId());
-				}
-				else {
-					p.addLine(l1.getId());
-					p.addLine(l2.getId());
-					pointSet.insert(p);
+				double p_x = p.getX();
+				if (l1.isOnLine(p_x) && l2.isOnLine(p_x)) {
+					//set<Point>::iterator iterP = pointSet.find(p);
+					unordered_set<Point, hashPoint>::iterator iterP = pointSet.find(p);
+					//if find, add all the id of lines intersected at this point to inteId
+					if (iterP != pointSet.end()) {
+						p = *iterP;
+						vector<int> temp = p.getLines();
+						inteId.insert(temp.begin(), temp.end());
+						p.addLine(l1.getId());
+					}
+					else {
+						p.addLine(l1.getId());
+						p.addLine(l2.getId());
+						pointSet.insert(p);
+					}
 				}
 			}
 		}
@@ -175,7 +188,10 @@ void Proc::lineAndCircle(Circle circle) {
 			vector<Point> s = circle.withLine(l);
 			vector<Point>::iterator iterS;
 			for (iterS = s.begin(); iterS != s.end(); iterS++) {
-				pointSet.insert(*iterS);
+				double p_x = (*iterS).getX();
+				if (l.isOnLine(p_x)) {
+					pointSet.insert(*iterS);
+				}
 			}
 		}
 	}

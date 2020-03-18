@@ -1,10 +1,16 @@
 ﻿#include "Project1.h"
 
 
-Line::Line(int x1, int y1, int x2, int y2, int no) {
-	a = static_cast<double>(y2) - static_cast<double>(y1);
-	b = static_cast<double>(x1) - static_cast<double>(x2);
-	c = static_cast<double>(x2)* static_cast<double>(y1) - static_cast<double>(x1)* static_cast<double>(y2);
+Line::Line(int x_1, int y_1, int x_2, int y_2, string tp, int no) {
+	x1 = static_cast<double>(x_1);
+	y1 = static_cast<double>(y_1);
+	x2 = static_cast<double>(x_2);
+	y2 = static_cast<double>(y_2);
+	type = tp;
+	direction = dBthan(x2, x1);
+	a = y2 - y1;
+	b = x1 - x2;
+	c = x2 * y1 - x1 * y2;
 	id = no;
 	pro();
 }
@@ -49,6 +55,8 @@ Point Line::withLine(Line l) {
 }
 
 Line::Line() {
-	a = b = c = id = 0;
+	x1 = x2 = y1 = y2 = a = b = c = id = 0;
+	type = "Line";
+	direction = true;
 	pro();
 }

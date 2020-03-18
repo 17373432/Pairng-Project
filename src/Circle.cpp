@@ -20,7 +20,7 @@ vector<Point> Circle::withLine(Line l) {
 
 	const double delta = r2 - pow(l.getA() * x0 + l.getB() * y0 + l.getC(), 2) / l.geta2Ab2();
 
-	if (delta > 0 || dEqual(delta, 0)) {
+	if (dBequal(delta, 0)) {
 		const double sqrtDelta = sqrt(delta);
 		const double leftX = (l.getb2() * x0 - l.getab() * y0 - l.getac()) / l.geta2Ab2();
 		const double rightX = sqrtDelta * l.getCos();
@@ -41,8 +41,7 @@ vector<Point> Circle::withCircle(Circle that) {
 	const double min = abs(r - that.r);
 	const double d = sqrt(pow(o.getX() - that.o.getX(), 2) + pow(o.getY() - that.o.getY(), 2));
 
-	if ((min < d || dEqual(min, d))
-		&& (d < max || dEqual(d, max))) {
+	if (dLequal(min, d) && dLequal(d, max)) {
 		const double A = that.xx - xx;
 		const double B = that.yy - yy;
 		const double C = x2Ay2Sr2 - that.x2Ay2Sr2;
