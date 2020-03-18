@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
-#include "../PairProject/Project1.h"
+#include "../PairProjectUsingDll/Project1.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
