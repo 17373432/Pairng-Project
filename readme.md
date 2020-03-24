@@ -11,6 +11,10 @@
 
 ## 二、命令行工具使用方法
 
-1. 进入bin/
+1. 进入`bin/`
 2. 运行`./intersect.exe -i <path to input file> -o <path to output file>`
 
+## 三、命令行工具使用方法
+
+1. 进入`gui/bin/`
+2. 运行`intersect.exe`
