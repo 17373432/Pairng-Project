@@ -4,12 +4,19 @@
 #include <vector>
 #include <fstream>
 #include <unordered_set>
+#include <unordered_map>
 #include <math.h>
 
 #define eps 0.00000000001
 #define inf 1000000
 
 using namespace std;
+
+inline long long dround(double x) {
+	long long result;
+	result = (long long)((floor)(x * 10000.000f + 0.5));
+	return result;
+}
 
 inline bool dEqual(double x, double y) {
 	double temp = 0;
@@ -83,7 +90,12 @@ public:
 class hashPoint {
 public:
 	std::size_t operator()(const Point& p) const {
-		return (hash<double>()(p.x) << 16) + hash<double>()(p.y);
+		long long x, y;
+		x = dround(p.x);
+		y = dround(p.y);
+		auto h1 = std::hash<long long>{}(x);
+		auto h2 = std::hash<long long>{}(y);
+		return h1 ^ h2;
 	}
 };
 
@@ -104,6 +116,8 @@ private:
 	double bc;
 	double cos;
 	double sin;
+	double x_intercept;
+	double y_intercept;
 
 	string type;
 	double x1;
@@ -117,15 +131,28 @@ public:
 	Line(int x1, int y1, int x2, int y2, string tp, int no);
 	Line(double A, double B, double C);
 	Line();
-	bool isOnLine(double x) {
+	inline bool isOnLine(double x, double y) {
 		bool result = true;
+
 		if (type == "Segment") {
-			result = dLequal(x1, x) && dLequal(x, x2)
-				|| dLequal(x2, x) && dLequal(x, x1);
+			if (!dEqual(x1, x2)) {
+				result = dLequal(x1, x) && dLequal(x, x2)
+					|| dLequal(x2, x) && dLequal(x, x1);
+			}
+			else {
+				result = dLequal(y1, y) && dLequal(y, y2)
+					|| dLequal(y2, y) && dLequal(y, y1);
+			}
 		}
 		else if (type == "Ray") {
-			return direction && dBequal(x, x1)
-				|| !direction && dLequal(x, x1);
+			if (!dEqual(x1, x2)) {
+				result = direction && dBequal(x, x1)
+					|| !direction && dLequal(x, x1);
+			}
+			else {
+				result = dBthan(y2, y1) && dBequal(y, y1)
+					|| dLthan(y2, y1) && dLequal(y, y1);
+			}
 		}
 		return result;
 	}
@@ -174,6 +201,31 @@ public:
 	inline double getSin() {
 		return sin;
 	}
+	inline double getXintercept() {
+		return x_intercept;
+	}
+	inline double getYintercept() {
+		return y_intercept;
+	}
+	inline string getType() {
+		return type;
+	}
+	inline double getX1() {
+		return x1;
+	}
+	inline double getY1() {
+		return y1;
+	}
+	inline double getX2() {
+		return x2;
+	}
+	inline double getY2() {
+		return y2;
+	}
+	inline bool getDir() {
+		return direction;
+	}
+
 };
 
 class Circle {
@@ -196,8 +248,24 @@ public:
 	}
 };
 
+struct pair_hash
+{
+	template<class T1, class T2>
+	std::size_t operator() (const std::pair<T1, T2>& p) const
+	{
+		long long first, second;
+		first = dround(p.first);
+		second = dround(p.second);
+		auto h1 = std::hash<long long>{}(first);
+		auto h2 = std::hash<long long>{}(second);
+		return h1 ^ h2;
+	}
+};
+
 class Proc {
 private:
+	unordered_map<pair<double, double>, vector<Line>, pair_hash> lines;
+	unordered_set<string> circles;
 	map<double, vector<Line>> preMap;
 	unordered_set<Point, hashPoint> pointSet;
 	//set<Point> pointSet;
@@ -206,13 +274,29 @@ private:
 	vector<Circle> circleSet;
 public:
 	Proc();
-	int process(ifstream& in);
-	void preProcLine(Line line);
-	int calcPoint();
+	void process(stringstream& in);
+	bool preProcLine(Line line);
+	void calcPoint();
 	void lineAndLine();
 	void addCircle(Circle circle) {
 		circleSet.push_back(circle);
-	}
+	};
 	void calcCircle();
 	void lineAndCircle(Circle circle);
+	bool isCover(Line l1, Line l2);
+	/*
+	unordered_set<Point, hashPoint> getPointSet() {
+		return pointSet;
+	}*/
+	void getPointSet(vector<pair<double, double>>& v) {
+		unordered_set<Point, hashPoint>::iterator iter;
+		for (iter = pointSet.begin(); iter != pointSet.end(); iter++) {
+			Point point = *iter;
+			pair<double, double> p(point.getX(), point.getY());
+			v.push_back(p);
+		}
+	}
 };
+void getPoints(vector<pair<double, double>>& result, stringstream& in);
+int core(string name);
+//vector<pair<double, double>> core(string name);

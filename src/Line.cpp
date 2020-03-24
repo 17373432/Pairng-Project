@@ -12,6 +12,21 @@ Line::Line(int x_1, int y_1, int x_2, int y_2, string tp, int no) {
 	b = x1 - x2;
 	c = x2 * y1 - x1 * y2;
 	id = no;
+
+	if (dEqual(a, 0)) {
+		x_intercept = inf;
+	}
+	else {
+		x_intercept = -c / a;
+	}
+
+	if (dEqual(b, 0)) {
+		y_intercept = inf;
+	}
+	else {
+		y_intercept = -c / b;
+	}
+
 	pro();
 }
 
@@ -56,6 +71,7 @@ Point Line::withLine(Line l) {
 
 Line::Line() {
 	x1 = x2 = y1 = y2 = a = b = c = id = 0;
+	x_intercept = y_intercept = 0;
 	type = "Line";
 	direction = true;
 	pro();

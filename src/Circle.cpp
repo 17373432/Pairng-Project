@@ -12,7 +12,6 @@ Circle::Circle(int cx, int cy, int cr, int no) {
 	x2Ay2Sr2 = pow(cx, 2) + pow(cy, 2) - r2;
 }
 
-
 vector<Point> Circle::withLine(Line l) {
 	vector<Point> s;
 	const double x0 = o.getX();
